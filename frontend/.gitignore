@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment files
+.env*
+
+# Build outputs
+.next/
+.cache/
+out/
+
+# Static exports
+out/
+
+# Testing
+coverage/
+.jest/
+
+# IDE files
+.vscode/
+*.swp
+.idea/
