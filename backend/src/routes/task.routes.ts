@@ -5,15 +5,15 @@
 import express from 'express';
 import { body, param } from 'express-validator';
 
-import validate from '../middlewares/validate.js';
 import {
-  getTasks,
-  getTaskById,
   createTask,
-  updateTask,
   deleteTask,
+  getTaskById,
+  getTasks,
+  updateTask,
 } from '../controllers/task.controller.js';
 import { authenticateUser } from '../middlewares/authenticate-user.js';
+import validate from '../middlewares/validate.js';
 
 const router = express.Router();
 

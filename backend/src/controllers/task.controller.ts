@@ -3,15 +3,15 @@
  * Matches paths defined in openapi.yaml for GET /api/tasks and POST /api/tasks
  */
 import { Request, Response } from 'express';
-import prisma from '../utils/prisma.js';
 
 import {
   CreateTaskDTO,
-  UpdateTaskDTO,
   TaskResponseDTO,
+  UpdateTaskDTO,
 } from '../dtos/index.js';
-import { mapTaskToTaskResponseDTO } from '../utils/task-mapper.js';
 import { TaskModel } from '../models/task.model.js';
+import prisma from '../utils/prisma.js';
+import { mapTaskToTaskResponseDTO } from '../utils/task-mapper.js';
 
 /**
  * Retrieves all tasks that are not soft deleted.

@@ -2,12 +2,13 @@
  * Swagger UI setup for serving API documentation from openapi.yaml.
  * Matches the structure defined in openapi.yaml
  */
-import swaggerUi from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
-import YAML from 'yaml';
-import { Express } from 'express';
 import { fileURLToPath } from 'url';
+
+import { Express } from 'express';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yaml';
 
 // Convert import.meta.url to usable file paths in ES Modules
 const __filename = fileURLToPath(import.meta.url);

@@ -1,8 +1,9 @@
-import globals from 'globals';
 import pluginJs from '@eslint/js';
-import tseslint from 'typescript-eslint';
-import prettier from 'eslint-plugin-prettier';
 import prettierConfig from 'eslint-config-prettier';
+import pluginImport from 'eslint-plugin-import';
+import prettier from 'eslint-plugin-prettier';
+import globals from 'globals';
+import tseslint from 'typescript-eslint';
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
@@ -17,6 +18,7 @@ export default [
   {
     plugins: {
       prettier: prettier,
+      import: pluginImport,
     },
     rules: {
       quotes: ['error', 'single', { avoidEscape: true }],
@@ -27,6 +29,23 @@ export default [
       ],
       'eol-last': ['error', 'always'],
       'prettier/prettier': ['error'],
+      'import/order': [
+        'error',
+        {
+          groups: [
+            'builtin', // Node.js modules (fs, path)
+            'external', // Installed packages (express, prisma)
+            'internal', // Aliased modules (like "@/utils/")
+            'parent', // ../ imports
+            'sibling', // ./ imports
+            'index', // ./index imports
+            'object', // Destructuring
+            'type', // Type imports
+          ],
+          'newlines-between': 'always',
+          alphabetize: { order: 'asc', caseInsensitive: true },
+        },
+      ],
     },
   },
 ];
