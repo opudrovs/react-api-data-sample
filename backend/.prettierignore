@@ -1,0 +1,11 @@
+# Ignore dependencies and build artifacts
+node_modules
+.dist
+coverage
+
+# Ignore specific generated or minimized files
+*.min.js
+
+# Ignore logs and temporary files
+*.log
+*.tmp
