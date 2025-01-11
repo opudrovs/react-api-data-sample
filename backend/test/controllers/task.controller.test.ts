@@ -1,18 +1,19 @@
-import {
-  getTasks,
-  getTaskById,
-  createTask,
-  updateTask,
-  deleteTask,
-} from '../../src/controllers/task.controller.js';
 import { Request, Response } from 'express';
-import { prismaMock } from '../__mocks__/prisma.mock.js';
+
 import {
-  TaskResponseDTO,
+  createTask,
+  deleteTask,
+  getTaskById,
+  getTasks,
+  updateTask,
+} from '../../src/controllers/task.controller.js';
+import {
   CreateTaskDTO,
+  TaskResponseDTO,
   UpdateTaskDTO,
 } from '../../src/dtos/index.js';
 import { mapTaskToTaskResponseDTO } from '../../src/utils/task-mapper.js';
+import { prismaMock } from '../__mocks__/prisma.mock.js';
 
 const tasksMock = [
   {

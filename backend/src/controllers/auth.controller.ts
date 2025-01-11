@@ -3,6 +3,7 @@
  * Matches POST /api/auth/login in openapi.yaml
  */
 import { Request, Response } from 'express';
+
 import { logInUser } from '../services/auth.service.js';
 
 /**

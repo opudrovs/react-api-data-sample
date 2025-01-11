@@ -2,7 +2,7 @@
  * Middleware to authenticate users using Supabase JWT tokens.
  * Matches the security scheme BearerAuth defined in openapi.yaml
  */
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
 import { supabaseClient } from '../utils/supabase-client.js';
 

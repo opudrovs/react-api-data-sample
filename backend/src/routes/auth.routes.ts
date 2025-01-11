@@ -5,8 +5,8 @@
 import express from 'express';
 import { body } from 'express-validator';
 
-import validate from '../middlewares/validate.js';
 import { loginHandler } from '../controllers/auth.controller.js';
+import validate from '../middlewares/validate.js';
 
 const router = express.Router();
 
