@@ -2,7 +2,7 @@
  * Maps TaskModel to DTO objects.
  */
 import { TaskResponseDTO } from '../dtos/index.js';
-import { TaskModel } from '../models/task.model.js';
+import { TaskModel } from '../models/TaskModel.js';
 
 export const mapTaskToTaskResponseDTO = (task: TaskModel): TaskResponseDTO => ({
   id: task.id,
