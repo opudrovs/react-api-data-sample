@@ -38,11 +38,18 @@ router.post(
       .escape()
       .isString()
       .withMessage('Description must be a string'),
+    body('status')
+      .trim()
+      .escape()
+      .isIn(['Pending', 'In Progress', 'Completed'])
+      .withMessage(
+        'Invalid status. Status can be Pending, In Progress, or Completed'
+      ),
     body('priority')
       .trim()
       .escape()
       .isIn(['Low', 'Medium', 'High'])
-      .withMessage('Invalid priority'),
+      .withMessage('Invalid priority. Priority can be Low, Medium, or High'),
     body('dueDate')
       .trim()
       .escape()
@@ -70,7 +77,20 @@ router.put(
       .escape()
       .isString()
       .withMessage('Description must be a string'),
-    body('priority').optional().escape().isIn(['Low', 'Medium', 'High']),
+    body('status')
+      .trim()
+      .escape()
+      .isIn(['Pending', 'In Progress', 'Completed'])
+      .withMessage(
+        'Invalid status. Status can be "Pending", "In Progress", or "Completed"'
+      ),
+    body('priority')
+      .trim()
+      .escape()
+      .isIn(['Low', 'Medium', 'High'])
+      .withMessage(
+        'Invalid priority. Priority can be "Low", "Medium", or "High"'
+      ),
     body('dueDate').optional().escape().isISO8601().toDate(),
   ],
   validate,
