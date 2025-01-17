@@ -6,6 +6,7 @@
 [Known Limitations](#known-limitations)  
 [Demo](#demo)  
 [Running the Backend Locally](#running-the-backend-locally)  
+[Authentication](#authentication)  
 [Pre-Populated Tasks](#pre-populated-tasks)
 
 ## Introduction
@@ -103,15 +104,49 @@ To run the backend locally, follow these steps:
     - Swagger API Documentation: [http://localhost:4000/api-docs](http://localhost:4000/api-docs)
 
 7. **Authenticating in Swagger:**
-    - First log in via the Login route in the Swagger UI with the demo login credentials. Copy the token you receive in case of successful login.
-    - Click the `Authorize` button on the Swagger UI.
-    - Enter the token you received in the `Value` field and click `Authorize`.
+    - Log in via the Login route in the Swagger UI with the demo login credentials. The cookie will be set and you will be able to access the other routes.
 
 8. **Demo Login Credentials (for Testing Only):**
     - **Login:** demo@example.com
     - **Password:** password123
 
    These credentials should be used for testing purposes only. Do not include sensitive data in the tasks you create.
+
+9. To log out and clear the cookie, use the Logout route in the Swagger UI.
+
+## Authentication
+
+### How Authentication Works
+- The backend uses HTTP cookies for authentication instead of Bearer tokens.
+- When a user logs in, the backend sets an `authToken` cookie containing the authentication token.
+- All subsequent requests to protected endpoints require the `authToken` cookie.
+
+## Logging In
+To authenticate, send a `POST` request to `/api/auth/login` with the following JSON payload:
+
+```json
+{
+  "email": "demo@example.com",
+  "password": "password123"
+}
+```
+
+- If authentication is successful, the response will include a `Set-Cookie` header with authToken.
+
+- The client must store and send this cookie in all subsequent requests.
+
+### Using Swagger UI with Cookie-Based Authentication
+
+1. Navigate to [http://localhost:4000/api-docs](http://localhost:4000/api-docs).
+2. Go to the POST `/api/auth/login` endpoint.
+3. Enter the demo credentials and execute the request.
+4. Once logged in, Swagger will automatically store the authentication cookie.
+5. Now you can access protected routes like GET `/api/tasks` without manually setting an authorization token.
+6. To log out, send a POST request to /api/auth/logout. This will clear the authentication cookie.
+
+```bash
+curl -X POST http://localhost:4000/api/auth/logout
+```
 
 ## Pre-Populated Tasks
 
