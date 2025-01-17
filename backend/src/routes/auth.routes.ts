@@ -5,7 +5,7 @@
 import express from 'express';
 import { body } from 'express-validator';
 
-import { loginHandler } from '../controllers/auth.controller.js';
+import { loginHandler, logoutHandler } from '../controllers/auth.controller.js';
 import validate from '../middlewares/validate.js';
 
 const router = express.Router();
@@ -26,5 +26,7 @@ router.post(
   validate,
   loginHandler
 );
+
+router.post('/logout', logoutHandler);
 
 export default router;

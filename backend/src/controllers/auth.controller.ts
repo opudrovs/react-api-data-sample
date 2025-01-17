@@ -25,7 +25,14 @@ export const loginHandler = async (req: Request, res: Response) => {
       return;
     }
 
-    res.status(200).json({ message: 'Authentication successful', token });
+    res.cookie('authToken', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 3600000,
+    });
+
+    res.status(200).json({ message: 'Authentication successful' });
   } catch (error) {
     console.error('Unexpected login error:', error);
     res.status(500).json({
@@ -33,4 +40,17 @@ export const loginHandler = async (req: Request, res: Response) => {
         'An unexpected error occurred during the login process. Please try again later.',
     });
   }
+};
+
+/**
+ * Handles user logout by clearing the authToken cookie
+ */
+export const logoutHandler = (req: Request, res: Response) => {
+  res.clearCookie('authToken', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+  });
+
+  res.status(200).json({ message: 'Logged out successfully' });
 };

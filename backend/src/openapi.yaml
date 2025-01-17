@@ -10,42 +10,49 @@ servers:
 paths:
   /api/auth/login:
     post:
-      summary: Log in a user and return a token
+      summary: Log in a user and return an auth cookie
       operationId: logInUser
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                password:
-                  type: string
+              $ref: '#/components/schemas/LoginRequest'
       responses:
         200:
-          description: OK - Successful login, returns JWT token
+          description: Successful login, sets the auth cookie
+        400:
+          description: Bad Request - Email and password are required
+        401:
+          description: Unauthorized - Invalid credentials
+        500:
+          description: Internal Server Error
+
+  /api/auth/logout:
+    post:
+      summary: Log out a user by clearing the authentication cookie
+      operationId: logoutUser
+      security: []
+      responses:
+        200:
+          description: Successfully logged out, cookie cleared
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  token:
+                  message:
                     type: string
-        400:
-          description: Bad Request - Email and password are required
-        401:
-          description: Unauthorized - Authorization token required or invalid
+                    example: 'Logged out successfully'
         500:
-          description: Internal Server Error
+          description: Internal Server Error - Failed to clear auth cookie
 
   /api/tasks:
     get:
-      summary: Get all active tasks
+      summary: Get all tasks
       operationId: getAllTasks
       security:
-        - BearerAuth: []
+        - CookieAuth: []
       responses:
         200:
           description: OK - A list of active tasks (soft deleted tasks are excluded)
@@ -56,14 +63,14 @@ paths:
                 items:
                   $ref: '#/components/schemas/Task'
         401:
-          description: Unauthorized - Authorization token required or invalid
+          description: Unauthorized - Auth cookie missing or invalid
         500:
           description: Internal Server Error - Failed to retrieve tasks
     post:
       summary: Create a new task
       operationId: createTask
       security:
-        - BearerAuth: []
+        - CookieAuth: []
       requestBody:
         required: true
         content:
@@ -74,7 +81,7 @@ paths:
         201:
           description: Created - Task created
         401:
-          description: Unauthorized - Authorization token required or invalid
+          description: Unauthorized - Auth cookie missing or invalid
         500:
           description: Internal Server Error - Failed to create task
 
@@ -83,7 +90,7 @@ paths:
       summary: Get a specific task
       operationId: getTaskById
       security:
-        - BearerAuth: []
+        - CookieAuth: []
       parameters:
         - name: id
           in: path
@@ -98,7 +105,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Task'
         401:
-          description: Unauthorized - Authorization token required or invalid
+          description: Unauthorized - Auth cookie missing or invalid
         404:
           description: Not Found - Task not found
         500:
@@ -107,7 +114,7 @@ paths:
       summary: Update a task
       operationId: updateTaskById
       security:
-        - BearerAuth: []
+        - CookieAuth: []
       parameters:
         - name: id
           in: path
@@ -124,7 +131,7 @@ paths:
         200:
           description: OK - Task updated
         401:
-          description: Unauthorized - Authorization token required or invalid
+          description: Unauthorized - Auth cookie missing or invalid
         403:
           description: Forbidden - Task is read-only and cannot be updated
         404:
@@ -135,7 +142,7 @@ paths:
       summary: Soft-delete a task
       operationId: softDeleteTaskById
       security:
-        - BearerAuth: []
+        - CookieAuth: []
       parameters:
         - name: id
           in: path
@@ -146,7 +153,7 @@ paths:
         204:
           description: No Content - Task soft-deleted
         401:
-          description: Unauthorized - Authorization token required or invalid
+          description: Unauthorized - Auth cookie missing or invalid
         403:
           description: Forbidden - Task is read-only and cannot be deleted
         404:
@@ -155,7 +162,21 @@ paths:
           description: Internal Server Error - Failed to delete task
 
 components:
+  securitySchemes:
+    CookieAuth:
+      type: apiKey
+      in: cookie
+      name: authToken
+
   schemas:
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
     Task:
       type: object
       properties:
@@ -213,9 +234,3 @@ components:
         readOnly:
           type: boolean
           default: false
-
-  securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT

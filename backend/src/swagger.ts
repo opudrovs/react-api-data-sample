@@ -7,6 +7,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 import { Express } from 'express';
+import { RequestInit } from 'node-fetch';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yaml';
 
@@ -23,5 +24,30 @@ const swaggerDocument = YAML.parse(file);
  * @param app - The Express application instance.
  */
 export const setupSwagger = (app: Express) => {
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+  app.use(
+    '/api-docs',
+    swaggerUi.serve,
+    swaggerUi.setup(swaggerDocument, {
+      swaggerOptions: {
+        withCredentials: true,
+        requestInterceptor: (req: RequestInit) => {
+          if (!req.headers) {
+            req.headers = {};
+          }
+
+          // Handle different possible header formats
+          if (req.headers instanceof Headers) {
+            req.headers.set('X-Requested-With', 'XMLHttpRequest');
+          } else if (Array.isArray(req.headers)) {
+            req.headers.push(['X-Requested-With', 'XMLHttpRequest']);
+          } else {
+            (req.headers as Record<string, string>)['X-Requested-With'] =
+              'XMLHttpRequest';
+          }
+
+          return req;
+        },
+      },
+    })
+  );
 };
