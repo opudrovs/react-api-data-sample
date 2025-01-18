@@ -44,6 +44,8 @@ export const loginHandler = async (req: Request, res: Response) => {
 
 /**
  * Handles user logout by clearing the authToken cookie
+ * @param req - Express request object.
+ * @param res - Express response object.
  */
 export const logoutHandler = (req: Request, res: Response) => {
   res.clearCookie('authToken', {
