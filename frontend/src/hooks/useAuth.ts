@@ -2,6 +2,10 @@
 
 import { useEffect, useState } from 'react';
 
+import { useRouter } from 'next/navigation';
+
+export const API_ROOT = 'http://localhost:4000';
+
 /**
  * Custom React hook for managing user authentication state.
  * Uses cookie-based authentication instead of localStorage tokens.
@@ -12,6 +16,7 @@ import { useEffect, useState } from 'react';
  */
 export const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const router = useRouter();
 
   useEffect(() => {
     checkAuthStatus(); // Automatically check authentication status on load
@@ -19,7 +24,7 @@ export const useAuth = () => {
 
   // Login function (uses cookies)
   const login = async (email: string, password: string) => {
-    const response = await fetch('/api/auth/login', {
+    const response = await fetch(API_ROOT + '/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include', // Ensures cookies are sent and received
@@ -28,12 +33,13 @@ export const useAuth = () => {
 
     if (response.ok) {
       setIsAuthenticated(true);
+      router.push('/');
     }
   };
 
   // Logout function (clears session cookie)
   const logout = async () => {
-    await fetch('/api/auth/logout', {
+    await fetch(API_ROOT + '/api/auth/logout', {
       method: 'POST',
       credentials: 'include', // Ensures the auth cookie is cleared
     });
@@ -44,7 +50,7 @@ export const useAuth = () => {
 
   // Check authentication status (calls a protected endpoint)
   const checkAuthStatus = async () => {
-    const response = await fetch('/api/auth/status', {
+    const response = await fetch(API_ROOT + '/api/auth/status', {
       method: 'GET',
       credentials: 'include', // Sends cookies to check session
     });

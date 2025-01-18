@@ -12,15 +12,24 @@ import { setupSwagger } from './swagger.js';
 
 const app = express();
 
-const PORT = process.env.PORT || 4000;
+// const PORT = process.env.PORT || 4000;
 
 app.use(
   cors({
-    origin: `http://localhost:${PORT}`,
+    origin: 'http://localhost:3000',
     credentials: true,
-    allowedHeaders: ['Content-Type', 'X-Requested-With'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   })
 );
+
+// app.use(
+//   cors({
+//     origin: `http://localhost:${PORT}`,
+//     credentials: true,
+//     allowedHeaders: ['Content-Type', 'X-Requested-With'],
+//   })
+// );
 app.use(cookieParser());
 app.use(express.json());
 

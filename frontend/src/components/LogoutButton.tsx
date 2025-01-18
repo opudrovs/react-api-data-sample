@@ -1,4 +1,9 @@
 import { Button } from '@mantine/core';
+
+import { useAuth } from '@/hooks/useAuth';
+
 export const LogoutButton = () => {
-  return <Button>Logout</Button>;
+  const { logout } = useAuth();
+
+  return <Button onClick={() => logout()}>Log Out</Button>;
 };

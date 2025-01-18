@@ -1,33 +1,45 @@
 'use client';
 
-import { createTheme, MantineProvider } from '@mantine/core';
-import { useState } from 'react';
+import dynamic from 'next/dynamic';
 
-import { LogoutButton } from '@/components/LogoutButton';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import {
+  MantineProvider,
+  createTheme,
+  localStorageColorSchemeManager,
+} from '@mantine/core';
 
 import '@/styles/globals.css';
+import '@mantine/core/styles.css';
+
+const theme = createTheme({
+  fontFamily: 'Open Sans, sans-serif',
+  primaryColor: 'cyan',
+});
+
+export const COLOR_SCHEME_KEY = 'react-api-demo-color-scheme';
+
+const colorSchemeManager = localStorageColorSchemeManager({
+  key: COLOR_SCHEME_KEY,
+});
+
+const InnerLayout = dynamic(() => import('@/components/InnerLayout'), {
+  ssr: false,
+});
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const [colorScheme] = useState('light');
-  // const toggleColorScheme = () =>
-  //   setColorScheme(colorScheme === 'light' ? 'dark' : 'light');
-
-  const theme = createTheme({
-    // TODO: create a theme
-  });
-
   return (
-    <MantineProvider theme={theme} withGlobalClasses>
-      <div className={`min-h-screen ${colorScheme === 'dark' ? 'dark' : ''}`}>
-        <nav className="flex justify-between p-4 bg-gray-200 dark:bg-gray-800">
-          <ThemeToggle />
-          <LogoutButton />
-        </nav>
-        <main>{children}</main>
-      </div>
-    </MantineProvider>
+    <html lang="en">
+      <body>
+        <MantineProvider
+          theme={theme}
+          colorSchemeManager={colorSchemeManager}
+          withGlobalClasses
+        >
+          <InnerLayout>{children}</InnerLayout>
+        </MantineProvider>
+      </body>
+    </html>
   );
 }
