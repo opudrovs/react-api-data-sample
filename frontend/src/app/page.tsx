@@ -3,10 +3,9 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+import { API_URL } from '@/constants';
 import { TaskResponseDTO } from '@/dtos';
 import { useAuth } from '@/hooks/useAuth';
-
-export const API_ROOT = 'http://localhost:4000';
 
 export default function Home() {
   const { isAuthenticated } = useAuth();
@@ -22,7 +21,7 @@ export default function Home() {
     }
 
     // Fetch tasks when user is authenticated
-    fetch(API_ROOT + '/api/tasks', { credentials: 'include' })
+    fetch(API_URL + '/api/tasks', { credentials: 'include' })
       .then((res) => res.json())
       .then((data) => {
         setTasks(data);

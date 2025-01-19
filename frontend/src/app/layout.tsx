@@ -1,12 +1,13 @@
 'use client';
 
-import dynamic from 'next/dynamic';
-
 import {
   MantineProvider,
   createTheme,
   localStorageColorSchemeManager,
 } from '@mantine/core';
+import dynamic from 'next/dynamic';
+
+import { COLOR_SCHEME_KEY } from '@/constants';
 
 import '@/styles/globals.css';
 import '@mantine/core/styles.css';
@@ -15,8 +16,6 @@ const theme = createTheme({
   fontFamily: 'Open Sans, sans-serif',
   primaryColor: 'cyan',
 });
-
-export const COLOR_SCHEME_KEY = 'react-api-demo-color-scheme';
 
 const colorSchemeManager = localStorageColorSchemeManager({
   key: COLOR_SCHEME_KEY,

@@ -4,7 +4,6 @@
 
 [Introduction](#introduction)  
 [Known Limitations](#known-limitations)  
-[Demo](#demo)  
 [Running the Backend Locally](#running-the-backend-locally)  
 [Authentication](#authentication)  
 [Pre-Populated Tasks](#pre-populated-tasks)
@@ -24,12 +23,6 @@ The backend includes a Task controller with CRUD operations: create, read (get a
 There are two sample CI workflows (`backend_ci.yml` and `frontend_ci.yml`) available in the `.github/workflows` directory. Each workflow is triggered automatically on a `git push` or pull request creation when either backend or frontend files are modified. They run ESLint and Prettier checks and unit tests. The backend includes sample unit tests for the Task controller.
 
 The complete project with frontend and backend will be dockerized and available for local development with a single command after the weekend!
-
-## Demo
-
-Video demo of the backend API running in the Swagger UI:
-
-[![Backend API Demo](https://img.youtube.com/vi/5c4tpK_mZNo/0.jpg)](https://www.youtube.com/watch?v=5c4tpK_mZNo)
 
 ## Known Limitations
 
@@ -121,7 +114,7 @@ To run the backend locally, follow these steps:
 - When a user logs in, the backend sets an `authToken` cookie containing the authentication token.
 - All subsequent requests to protected endpoints require the `authToken` cookie.
 
-## Logging In
+### Logging In
 To authenticate, send a `POST` request to `/api/auth/login` with the following JSON payload:
 
 ```json

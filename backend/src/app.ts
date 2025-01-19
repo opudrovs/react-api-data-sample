@@ -11,25 +11,17 @@ import taskRoutes from './routes/task.routes.js';
 import { setupSwagger } from './swagger.js';
 
 const app = express();
-
-// const PORT = process.env.PORT || 4000;
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 
 app.use(
   cors({
-    origin: 'http://localhost:3000',
+    origin: FRONTEND_URL,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   })
 );
 
-// app.use(
-//   cors({
-//     origin: `http://localhost:${PORT}`,
-//     credentials: true,
-//     allowedHeaders: ['Content-Type', 'X-Requested-With'],
-//   })
-// );
 app.use(cookieParser());
 app.use(express.json());
 

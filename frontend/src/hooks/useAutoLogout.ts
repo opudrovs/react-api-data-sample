@@ -2,6 +2,8 @@
 
 import { useEffect } from 'react';
 
+import { API_URL } from '@/constants';
+
 import { useAuth } from './useAuth';
 
 /**
@@ -16,7 +18,7 @@ export const useAutoLogout = () => {
   useEffect(() => {
     const checkSessionValidity = async () => {
       try {
-        const response = await fetch('/api/auth/status', {
+        const response = await fetch(API_URL + '/api/auth/status', {
           method: 'GET',
           credentials: 'include', // Ensures cookies are sent
         });
