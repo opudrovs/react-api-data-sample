@@ -12,16 +12,17 @@ import {
   TaskResponseDTO,
   UpdateTaskDTO,
 } from '../../src/dtos/index.js';
+import { TaskModel } from '../../src/models/task.model.js';
 import { mapTaskToTaskResponseDTO } from '../../src/utils/task-mapper.js';
 import { prismaMock } from '../__mocks__/prisma.mock.js';
 
-const tasksMock = [
+const tasksMock: TaskModel[] = [
   {
     id: 1,
     title: 'Task One',
     description: 'First sample task',
-    status: 'Pending',
-    priority: 'High',
+    status: 'PENDING',
+    priority: 'HIGH',
     dueDate: new Date('2024-01-01T00:00:00Z'),
     createdAt: new Date('2024-01-01T00:00:00Z'),
     readOnly: false,
@@ -31,8 +32,8 @@ const tasksMock = [
     id: 2,
     title: 'Task Two',
     description: 'Another test task',
-    status: 'Completed',
-    priority: 'Medium',
+    status: 'COMPLETED',
+    priority: 'MEDIUM',
     dueDate: new Date('2024-02-01T00:00:00Z'),
     createdAt: new Date('2024-01-01T00:00:00Z'),
     readOnly: false,
@@ -42,8 +43,8 @@ const tasksMock = [
     id: 3,
     title: 'Task Three',
     description: 'Third example task',
-    status: 'Pending',
-    priority: 'Low',
+    status: 'PENDING',
+    priority: 'LOW',
     dueDate: new Date('2024-03-01T00:00:00Z'),
     createdAt: new Date('2024-01-01T00:00:00Z'),
     readOnly: true,

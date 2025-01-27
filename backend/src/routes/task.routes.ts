@@ -41,15 +41,17 @@ router.post(
     body('status')
       .trim()
       .escape()
-      .isIn(['Pending', 'In Progress', 'Completed'])
+      .isIn(['PENDING', 'IN_PROGRESS', 'COMPLETED'])
       .withMessage(
-        'Invalid status. Status can be Pending, In Progress, or Completed'
+        'Invalid status. Status can be "PENDING", "IN_PROGRESS", or "COMPLETED"'
       ),
     body('priority')
       .trim()
       .escape()
-      .isIn(['Low', 'Medium', 'High'])
-      .withMessage('Invalid priority. Priority can be Low, Medium, or High'),
+      .isIn(['LOW', 'MEDIUM', 'HIGH'])
+      .withMessage(
+        'Invalid priority. Priority can be "LOW", "MEDIUM", or "HIGH"'
+      ),
     body('dueDate')
       .trim()
       .escape()
@@ -80,16 +82,16 @@ router.put(
     body('status')
       .trim()
       .escape()
-      .isIn(['Pending', 'In Progress', 'Completed'])
+      .isIn(['PENDING', 'IN_PROGRESS', 'COMPLETED'])
       .withMessage(
-        'Invalid status. Status can be "Pending", "In Progress", or "Completed"'
+        'Invalid status. Status can be "PENDING", "IN_PROGRESS", or "COMPLETED"'
       ),
     body('priority')
       .trim()
       .escape()
-      .isIn(['Low', 'Medium', 'High'])
+      .isIn(['LOW', 'MEDIUM', 'HIGH'])
       .withMessage(
-        'Invalid priority. Priority can be "Low", "Medium", or "High"'
+        'Invalid priority. Priority can be "LOW", "MEDIUM", or "HIGH"'
       ),
     body('dueDate').optional().escape().isISO8601().toDate(),
   ],
