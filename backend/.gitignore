@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment files
+.env*
+
+# Build outputs
+dist/
+
+# Docker
+docker-compose.override.yml
+.dockerignore
+
+# Prisma
+prisma/migrations/
+
+# Test coverage
+coverage/
+
+# IDE files
+.vscode/
+*.swp
+.idea/

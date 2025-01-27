@@ -1,0 +1,371 @@
+openapi: 3.1.0
+info:
+  title: Task API with Supabase Auth
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:4000
+    description: Local development server
+
+paths:
+  /api/auth/login:
+    post:
+      summary: Log in a user and return an auth cookie
+      operationId: logInUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        200:
+          description: Successful login, sets the auth cookie
+        400:
+          description: Bad Request - Email and password are required
+        401:
+          description: Unauthorized - Invalid credentials
+        422:
+          description: Validation error - Invalid request data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        500:
+          description: Internal Server Error
+
+  /api/auth/logout:
+    post:
+      summary: Log out a user by clearing the authentication cookie
+      operationId: logoutUser
+      security: []
+      responses:
+        200:
+          description: Successfully logged out, cookie cleared
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Logged out successfully'
+        500:
+          description: Internal Server Error - Failed to clear auth cookie
+
+  /api/auth/status:
+    get:
+      summary: Check user authentication status
+      operationId: checkAuthStatus
+      description: |
+        This endpoint verifies if the user is authenticated by validating their session token.
+        It uses middleware that extracts the `authToken` from cookies and checks it with Supabase.
+        If authentication is successful, the server returns a confirmation message.
+        Otherwise, an appropriate error response is returned.
+      security:
+        - CookieAuth: []
+      responses:
+        200:
+          description: User is authenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'User is authenticated'
+        401:
+          description: Unauthorized - Auth cookie missing, expired, or invalid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Authentication required. Please log in.'
+        500:
+          description: Internal Server Error - Unexpected authentication failure
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'An unexpected error occurred during authentication. Please try again later.'
+
+  /api/auth/validate:
+    get:
+      summary: Validate user authentication status
+      operationId: validateAuth
+      description: |
+        This endpoint verifies if the user is authenticated. 
+        Used primarily by Next.js middleware to check session validity before allowing access to protected routes.
+      security:
+        - CookieAuth: []
+      responses:
+        200:
+          description: User is authenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'User is authenticated'
+        401:
+          description: Unauthorized - Auth cookie missing, expired, or invalid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Authentication required.'
+        500:
+          description: Internal Server Error - Unexpected authentication failure
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'An unexpected error occurred during authentication. Please try again later.'
+
+  /api/tasks:
+    get:
+      summary: Get all tasks
+      operationId: getAllTasks
+      security:
+        - CookieAuth: []
+      responses:
+        200:
+          description: OK - A list of active tasks (soft deleted tasks are excluded)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+        401:
+          description: Unauthorized - Auth cookie missing or invalid
+        500:
+          description: Internal Server Error - Failed to retrieve tasks
+    post:
+      summary: Create a new task
+      operationId: createTask
+      security:
+        - CookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewTask'
+      responses:
+        201:
+          description: Created - Task created
+        401:
+          description: Unauthorized - Auth cookie missing or invalid
+        422:
+          description: Validation error - Invalid request data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        500:
+          description: Internal Server Error - Failed to create task
+
+  /api/tasks/{id}:
+    get:
+      summary: Get a specific task
+      operationId: getTaskById
+      security:
+        - CookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK - Task retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        401:
+          description: Unauthorized - Auth cookie missing or invalid
+        404:
+          description: Not Found - Task not found
+        422:
+          description: Validation error - Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        500:
+          description: Internal Server Error - Failed to retrieve task
+    put:
+      summary: Update a task
+      operationId: updateTaskById
+      security:
+        - CookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTask'
+      responses:
+        200:
+          description: OK - Task updated
+        401:
+          description: Unauthorized - Auth cookie missing or invalid
+        403:
+          description: Forbidden - Task is read-only and cannot be updated
+        404:
+          description: Not Found - Task not found
+        422:
+          description: Validation error - Invalid request parameters or data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        500:
+          description: Internal Server Error - Failed to update task
+    delete:
+      summary: Soft-delete a task
+      operationId: softDeleteTaskById
+      security:
+        - CookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        204:
+          description: No Content - Task soft-deleted
+        401:
+          description: Unauthorized - Auth cookie missing or invalid
+        403:
+          description: Forbidden - Task is read-only and cannot be deleted
+        404:
+          description: Not Found - Task not found or already deleted
+        422:
+          description: Validation error - Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        500:
+          description: Internal Server Error - Failed to delete task
+
+components:
+  securitySchemes:
+    CookieAuth:
+      type: apiKey
+      in: cookie
+      name: authToken
+
+  schemas:
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    ValidationError:
+      type: object
+      properties:
+        error:
+          type: array
+          description: List of validation errors
+          items:
+            type: object
+            properties:
+              msg:
+                type: string
+                description: Validation error message
+                example: 'Email must be a valid email address'
+              param:
+                type: string
+                description: The request parameter that caused the validation error
+                example: 'email'
+              location:
+                type: string
+                enum: [body, query, params]
+                description: Where the validation error occurred
+                example: 'body'
+    Task:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+        priority:
+          type: string
+        dueDate:
+          type: string
+          format: date-time
+        deletedAt:
+          type: string
+          format: date-time
+          nullable: true
+        readOnly:
+          type: boolean
+          default: false
+    NewTask:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+        priority:
+          type: string
+        dueDate:
+          type: string
+          format: date-time
+        readOnly:
+          type: boolean
+          default: false
+    UpdateTask:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+        priority:
+          type: string
+        dueDate:
+          type: string
+          format: date-time
+        readOnly:
+          type: boolean
+          default: false
