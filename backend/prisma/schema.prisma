@@ -8,12 +8,24 @@ generator client {
   seed = "ts-node prisma/seed.ts"
 }
 
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
 model Task {
    id          Int      @id @default(autoincrement())
    title       String
    description String?
-   status      String
-   priority    String
+   status      TaskStatus
+   priority    TaskPriority
    dueDate     DateTime
    createdAt   DateTime @default(now())
    deletedAt   DateTime?
