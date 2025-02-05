@@ -2,7 +2,8 @@
  * Main server file. Imports the app configuration and starts the server.
  * Matches the OpenAPI server URL defined in openapi.yaml
  */
-import './configs/dotenv.js'; // Loads env variables before anything else
+
+import './config/env.js'; // Load env variables before anything else
 
 import app from './app.js';
 

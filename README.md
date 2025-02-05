@@ -3,41 +3,95 @@
 ## Table of Contents
 
 [Introduction](#introduction)  
-[Known Limitations](#known-limitations)  
-[Running the Backend Locally](#running-the-backend-locally)  
+[Running the Demo with Docker](#running-the-demo-with-docker)  
+[Demo Login Credentials](#demo-login-credentials)  
+[Video Demo](#video-demo)  
+[Technical Challenges](#technical-challenges)  
+[Running the Backend Locally Without Docker](#running-the-backend-locally-without-docker)  
+[Running the Frontend Locally Without Docker](#running-the-frontend-locally-without-docker)  
 [Authentication](#authentication)  
-[Pre-Populated Tasks](#pre-populated-tasks)
 
 ## Introduction
 
-This is a comprehensive code sample for a task creation and management app utilizing Node.js and Express.js for the backend and Next.js with Mantine UI and TailwindCSS for the frontend. Both backend and frontend use TypeScript.
+This is a comprehensive code sample for a task creation and management app utilizing Node.js and Express.js for the backend and Next.js with Mantine UI and Tailwind CSS for the frontend. Both backend and frontend use TypeScript.
 
 The backend is functional and uses PostgreSQL with Prisma ORM and Supabase.
 
 Swagger documentation is automatically generated from the API description provided in `openapi.yaml` and is available at `/api-docs`.
 
-The sample currently includes a working backend. The frontend is a placeholder and will be updated soon.
+The frontend UI allows users to display a list of tasks, create new tasks, and edit or delete existing tasks.
 
 The backend includes a Task controller with CRUD operations: create, read (get all non-deleted tasks or get a task by ID), update, and soft-delete and a sample login route.
 
 There are two sample CI workflows (`backend_ci.yml` and `frontend_ci.yml`) available in the `.github/workflows` directory. Each workflow is triggered automatically on a `git push` or pull request creation when either backend or frontend files are modified. They run ESLint and Prettier checks and unit tests. The backend includes sample unit tests for the Task controller.
 
-The complete project with frontend and backend will be dockerized and available for local development with a single command after the weekend!
+You can spin up the whole project with Docker.
 
-## Known Limitations
+## Running the demo with Docker
 
-- The frontend is a placeholder and will be updated soon. Some components were added to demonstrate the basic structure of the app along with Prettier and ESLint configurations.
+To run the demo locally, please ensure that Docker and Docker Compose are installed on your machine. On macOS, you can install Docker Desktop which includes Docker Compose.
 
-- The backend is not yet dockerized.
+Check out the repository and run the following commands to spin up the whole project:
 
-- Since the mapper utility functions, TypeScript model files, and DTOs are shared between the backend and frontend, it would be ideal to move them to a shared package for a single source of truth. However, to keep this sample project simple and allow the backend and frontend to be built completely independently, they are currently kept separate in their respective directories. In a real-world project, the shared package approach would be more appropriate, following the DRY principle.
+```bash
+cd react-api-data-sample
+cp .env.example .env
+docker compose up --build
+```
 
-## Running the Backend Locally
+The frontend will be available at [http://localhost:3000](http://localhost:3000), the backend at [http://localhost:4000](http://localhost:4000), and the Swagger UI with the API docs at [http://localhost:4000/api-docs/](http://localhost:4000/api-docs/). The test PostgreSQL database will be created and seeded with sample data.
+
+(If there are conflicts with previously run containers, `docker compose down -v` should fix it.)
+
+## Demo Login Credentials
+
+```plaintext
+Email:
+testuser@example.com
+
+Password:
+ReactDemo123
+```
+
+These credentials should be used for testing purposes only.
+
+## Video Demo
+
+React/Next.js UI:  
+https://youtu.be/yViq7Q-s5TQ
+
+## Technical Challenges
+
+- So, the app is simple but I tried to keep the overall project setup (with useful NPM scripts, linter checks and architecture (UI libraries, auth, contexts) close to a real-world project.
+
+- The backend part is rather straightforward. It has auth routes for authentication and auth validation with Supabase (the auth token is sent to client as a cookie), request validation with the express-validator library, and uses popular middleware. The DB schema is defined in `backend/prisma/schema.prisma`. There is a script to seed the DB with test data.
+
+    The API docs UI is created with the help of Swagger parsing a YAML doc with the API description in OpenAPI format and runs locally at http://localhost:4000/api-docs/
+
+- The frontend part is more interesting. It is built with Next.js, which is a React-based framework supporting server-side rendering. So, while it might be an overkill in case of a typical single-page application, like a dashboard, Next.js is a very useful tool when it comes to rendering SEO-optimized content fast (for example, on marketing websites).
+
+    Also, Next.js can provide some benefits for rendering pages of a single-page app too, but it requires some adjustments from the simple client-side fetching with “Loading…” text my sample app uses right now. With Next.js, it is possible to render a “skeleton” of the app’s page very fast and then just stream data to the frontend from backend. And in case of regular client-side fetching in a real-world app I would prefer to use TanStack Query (former React Query), which was used in the previous project I worked on.
+
+    The most challenging part of the current sample was making frontend libraries play well with Next.js and with each other because of their somewhat non-standard setup.
+
+    Fortunately, Tailwind CSS, which I used for simple UI styling (like UI containers, spacing, etc.), works with Next.js out of the box.
+
+    But I was recommended Mantine UI, which is used successfully in a couple of startups I know as a lightweight, highly customizable alternative to Material UI (which we used in ar my previous workplace). I learned that their developers are happy, the customers are happy, and decided to try Mantine in my code sample even though Material UI is a more mature solution.
+
+    Since I didn’t work with Mantine before and only worked with Tailwind CSS a bit, I had to spend some time learning Mantine and figuring out how to make Mantine work with Next.js (because of server-side rendering) and how to make Mantine and Tailwind CSS work together and toggle light and dark themes with a single switch. So, I think now I got the hang of it.
+
+    Besides, adding the popular React Hook Form library for managing Mantine form input elements (I had to use both controlled (fully manageable) and uncontrolled inputs because of how Mantine does it) and the Zod library for Mantine input validation also took some time and workarounds.
+
+    Auth status and theme are provided across the app with Auth and Theme React contexts. Next.js middleware (which runs on the server) is used to validate auth before navigating to a route.
+
+- There are also two simple GitHub workflows running linter checks and basic tests on git push or pull request, if a file in a corresponding folder changed.
+
+## Running the Backend Locally Without Docker
 
 To run the backend locally, follow these steps:
 
 1. **Install Dependencies:**
-    - Ensure you have Node.js and npm installed.
+    - Ensure you have Node.js v22.12.0 and npm installed.
     - Navigate to the backend's root directory (where `package.json` is located).
     - Run:
 
@@ -61,7 +115,7 @@ To run the backend locally, follow these steps:
     SUPABASE_URL=https://lmomvxdophesuqdghzpv.supabase.co
     SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxtb212eGRvcGhlc3VxZGdoenB2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU5NTYwODUsImV4cCI6MjA1MTUzMjA4NX0.SgW7W43lOFF40TiG0Q-i5wSWM_b-6B6SAt7DXI5NVpI
 
-    # PostgreSQL user
+    # PostgreSQL user (replace user and password with your PostgreSQL credentials)
     DATABASE_URL=postgresql://user:password@localhost:5432/task_db
 
     # Swagger UI
@@ -108,14 +162,19 @@ To run the backend locally, follow these steps:
     - Log in via the Login route in the Swagger UI with the demo login credentials. The cookie will be set and you will be able to access the other routes.
 
 8. **Demo Login Credentials (for Testing Only):**
-    - **Login:** testuser@example.com
-    - **Password:** ReactDemo123
+    ```plaintext
+    Email:
+    testuser@example.com
 
-   These credentials should be used for testing purposes only. Do not include sensitive data in the tasks you create.
+    Password:
+    ReactDemo123
+    ```
+
+   These credentials should be used for testing purposes only.
 
 9. To log out and clear the cookie, use the Logout route in the Swagger UI.
 
-10. Frontend is currently a placeholder and will be updated soon. But if you want to run the frontend locally, create the following `.env.local` and `.env.production` files in the frontend root directory:
+10. If you want to run the frontend locally, create the following `.env.local` and `.env.production` files in the frontend root directory:
 
     .env.local:
 
@@ -129,11 +188,25 @@ To run the backend locally, follow these steps:
     NEXT_PUBLIC_API_URL=https://api.yourdomain.com
     ```
 
+    or just use `http://localhost:4000` for production too.
+
+## Running the Frontend Locally Without Docker
+
+To run the frontend locally, first make sure that the backend is running at `http://localhost:4000` and run the following commands from the root directory:
+
+```bash
+cd frontend
+npm run build
+npm run start
+```
+
+The frontend will be available at [http://localhost:3000](http://localhost:3000).
+
 ## Authentication
 
 ### How Authentication Works
-- The backend uses HTTP cookies for authentication instead of Bearer tokens.
-- When a user logs in, the backend sets an `authToken` cookie containing the authentication token.
+- The backend uses HTTP cookies for authentication.
+- When a user logs in with Supabase auth, the backend sets an `authToken` cookie containing the authentication token.
 - All subsequent requests to protected endpoints require the `authToken` cookie.
 
 ### Logging In
@@ -162,25 +235,3 @@ To authenticate, send a `POST` request to `/api/auth/login` with the following J
 ```bash
 curl -X POST http://localhost:4000/api/auth/logout
 ```
-
-## Pre-Populated Tasks
-
-- Tasks with `id < 11` are considered **read-only** and cannot be:
-    - Deleted
-    - Updated
-
-- The API returns a `readOnly` flag to help the frontend disable actions on such tasks.
-
-- Example API Response:
-
-```json
-{
-    "id": 5,
-    "title": "Sample Task",
-    "readOnly": true
-}
-```
-
----
-
-**Next Steps:** The project will soon be dockerized for easier local setup with a single command!

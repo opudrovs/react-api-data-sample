@@ -2,10 +2,12 @@
  * Manages user authentication using Supabase.
  * Matches POST /api/auth/login in openapi.yaml
  */
+
 import { Request, Response } from 'express';
 
-import { logInUser } from '../services/auth.service.js';
-import { supabaseClient } from '../utils/supabase-client';
+import { loginUser } from '../services/auth.service.js';
+import { logError } from '../utils/logger.js';
+import { supabaseClient } from '../utils/supabase-client.js';
 
 /**
  * Handles user login and returns a JWT token if successful.
@@ -20,7 +22,7 @@ export const loginHandler = async (req: Request, res: Response) => {
       return;
     }
 
-    const token = await logInUser(email, password);
+    const token = await loginUser(email, password);
     if (!token) {
       res.status(401).json({ message: 'Invalid credentials' });
       return;
@@ -35,7 +37,7 @@ export const loginHandler = async (req: Request, res: Response) => {
 
     res.status(200).json({ message: 'Authentication successful' });
   } catch (error) {
-    console.error('Unexpected login error:', error);
+    logError('Unexpected login error', error);
     res.status(500).json({
       message:
         'An unexpected error occurred during the login process. Please try again later.',

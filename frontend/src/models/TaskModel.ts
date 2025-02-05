@@ -1,8 +1,8 @@
-import { TaskPriority, TaskStatus } from '@/types/taskTypes';
+import { TaskPriority, TaskStatus } from '@/types/task';
 
 /**
  * TaskModel defines the structure of the Task entity as it exists in the database.
- * It represents the raw database model, not the transformed DTO used for external API responses.
+ * It represents the raw database model, not the transformed DTO used for API responses and requests.
  */
 export type TaskModel = {
   id: number;
@@ -13,5 +13,4 @@ export type TaskModel = {
   dueDate: Date;
   createdAt: Date;
   deletedAt: Date | null;
-  readOnly: boolean;
 };

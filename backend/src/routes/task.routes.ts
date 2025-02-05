@@ -2,6 +2,7 @@
  * Defines task-related routes for CRUD operations
  * Matches the endpoints defined in openapi.yaml under /api/tasks
  */
+
 import express from 'express';
 import { body, param } from 'express-validator';
 
@@ -41,9 +42,9 @@ router.post(
     body('status')
       .trim()
       .escape()
-      .isIn(['PENDING', 'IN_PROGRESS', 'COMPLETED'])
+      .isIn(['TO_DO', 'IN_PROGRESS', 'PENDING', 'COMPLETED'])
       .withMessage(
-        'Invalid status. Status can be "PENDING", "IN_PROGRESS", or "COMPLETED"'
+        'Invalid status. Status can be "TO_DO", "IN_PROGRESS", "PENDING", or "COMPLETED"'
       ),
     body('priority')
       .trim()
@@ -82,9 +83,9 @@ router.put(
     body('status')
       .trim()
       .escape()
-      .isIn(['PENDING', 'IN_PROGRESS', 'COMPLETED'])
+      .isIn(['TO_DO', 'IN_PROGRESS', 'PENDING', 'COMPLETED'])
       .withMessage(
-        'Invalid status. Status can be "PENDING", "IN_PROGRESS", or "COMPLETED"'
+        'Invalid status. Status can be "TO_DO", "IN_PROGRESS", "PENDING", or "COMPLETED"'
       ),
     body('priority')
       .trim()

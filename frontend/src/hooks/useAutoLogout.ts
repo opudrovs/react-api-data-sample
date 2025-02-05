@@ -4,14 +4,15 @@ import { useEffect } from 'react';
 
 import { API_URL } from '@/constants';
 import { useAuth } from '@/hooks/useAuth';
+import { logError } from '@/utils/logger';
 
 /**
- * Custom React hook that automatically logs out the user when their session expires.
+ * Hook that automatically logs out the user when their session expires.
  *
  * - Periodically checks session validity with the backend.
  * - Logs out the user if the session is invalid or expired.
  */
-export const useAutoLogout = () => {
+export const useAutoLogout = (): void => {
   const { logout } = useAuth();
 
   useEffect(() => {
@@ -23,16 +24,16 @@ export const useAutoLogout = () => {
         });
 
         if (!response.ok) {
-          logout(); // Log out if session is expired
+          logout(); // Log out if session has expired
         }
       } catch (error) {
-        console.error('Error checking session status:', error);
+        logError('Error checking session status:', error);
         logout();
       }
     };
 
     // Run session check every 1 minute
-    const interval = setInterval(checkSessionValidity, 60000);
+    const interval = setInterval(checkSessionValidity, 60 * 1000);
     return () => clearInterval(interval);
   }, [logout]);
 };

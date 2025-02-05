@@ -2,6 +2,7 @@
  * Handles CRUD operations for tasks.
  * Matches paths defined in openapi.yaml for GET /api/tasks and POST /api/tasks
  */
+
 import { Request, Response } from 'express';
 
 import {
@@ -10,6 +11,7 @@ import {
   UpdateTaskDTO,
 } from '../dtos/index.js';
 import { TaskModel } from '../models/task.model.js';
+import { logError } from '../utils/logger.js';
 import prisma from '../utils/prisma.js';
 import { mapTaskToTaskResponseDTO } from '../utils/task-mapper.js';
 
@@ -22,6 +24,7 @@ export const getTasks = async (req: Request, res: Response) => {
   try {
     const tasks: TaskModel[] = await prisma.task.findMany({
       where: { deletedAt: null },
+      orderBy: { id: 'asc' },
     });
 
     const response: TaskResponseDTO[] = tasks.map((task) =>
@@ -30,7 +33,7 @@ export const getTasks = async (req: Request, res: Response) => {
 
     res.status(200).json(response);
   } catch (error) {
-    console.error('Unexpected tasks retrieval error:', error);
+    logError('Unexpected tasks retrieval error', error);
     res.status(500).json({ message: 'Failed to retrieve tasks' });
   }
 };
@@ -57,7 +60,7 @@ export const getTaskById = async (req: Request, res: Response) => {
 
     res.status(200).json(response);
   } catch (error) {
-    console.error('Unexpected task retrieval error:', error);
+    logError('Unexpected task retrieval error', error);
     res.status(500).json({ message: 'Failed to retrieve task' });
   }
 };
@@ -75,7 +78,7 @@ export const createTask = async (req: Request, res: Response) => {
 
     res.status(201).json(response);
   } catch (error) {
-    console.error('Unexpected task creation error:', error);
+    logError('Unexpected task creation error', error);
     res.status(500).json({ error: 'Failed to create task' });
   }
 };
@@ -101,15 +104,7 @@ export const updateTask = async (req: Request, res: Response) => {
       return;
     }
 
-    // Check if the task is read-only
-    if (task.readOnly) {
-      res
-        .status(403)
-        .json({ message: 'Task is read-only and cannot be updated' });
-      return;
-    }
-
-    // Proceed with the update only if task is not read-only
+    // Proceed with the update
     const updatedTask: TaskModel = await prisma.task.update({
       where: { id: parseInt(id) },
       data: updateData,
@@ -119,7 +114,7 @@ export const updateTask = async (req: Request, res: Response) => {
 
     res.status(200).json(response);
   } catch (error) {
-    console.error('Unexpected task update error:', error);
+    logError('Unexpected task update error', error);
     res.status(500).json({ error: 'Failed to update task' });
   }
 };
@@ -144,14 +139,6 @@ export const deleteTask = async (req: Request, res: Response) => {
       return;
     }
 
-    // Check if the task is read-only
-    if (task.readOnly) {
-      res
-        .status(403)
-        .json({ message: 'Task is read-only and cannot be deleted' });
-      return;
-    }
-
     // Proceed with the soft deletion only if task is active
     await prisma.task.update({
       where: { id: parseInt(id) },
@@ -160,7 +147,7 @@ export const deleteTask = async (req: Request, res: Response) => {
 
     res.status(204).json({ message: 'Task deleted successfully' });
   } catch (error) {
-    console.error('Unexpected task deletion error:', error);
+    logError('Unexpected task deletion error', error);
     res.status(500).json({ error: 'Failed to delete task' });
   }
 };

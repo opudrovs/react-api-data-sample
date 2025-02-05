@@ -1,3 +1,14 @@
+/**
+ * Authentication Middleware
+ *
+ * This middleware checks if a user is authenticated before accessing protected routes.
+ * - It retrieves the `authToken` from cookies.
+ * - If no token is found, the user is redirected to the login page.
+ * - If a token exists, it is validated by making a request to the backend.
+ * - If validation fails, the user is redirected to login.
+ * - If validation succeeds, the request proceeds as normal.
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function middleware(req: NextRequest) {
@@ -9,10 +20,9 @@ export async function middleware(req: NextRequest) {
 
   // Call backend to validate the auth token
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/auth/validate`,
+    `${process.env.INTERNAL_API_URL}/api/auth/validate`,
     {
       method: 'GET',
-      credentials: 'include',
       headers: {
         Cookie: `authToken=${authToken}`, // Attach cookie for backend validation
         'Content-Type': 'application/json',

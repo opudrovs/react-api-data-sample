@@ -2,6 +2,7 @@
  * Extends the standard Express types to include additional properties
  * for handling authenticated user data from Supabase.
  */
+
 import { User } from '@supabase/supabase-js';
 
 declare global {

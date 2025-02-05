@@ -2,6 +2,8 @@
  * Service for handling user authentication using Supabase
  * Matches POST /api/auth/login defined in openapi.yaml
  */
+
+import { logError } from '../utils/logger.js';
 import { supabaseClient } from '../utils/supabase-client.js';
 
 /**
@@ -13,7 +15,7 @@ import { supabaseClient } from '../utils/supabase-client.js';
  * @param password - The user's password for authentication.
  * @returns A JWT token if successful, otherwise returns null.
  */
-export const logInUser = async (
+export const loginUser = async (
   email: string,
   password: string
 ): Promise<string | null> => {
@@ -25,7 +27,7 @@ export const logInUser = async (
 
   // If there is an error or no session data, log and return null
   if (error != null || !data?.session) {
-    console.error('Login failed:', error?.message ?? 'Unknown error');
+    logError('Login failed', error?.message ?? 'Unknown error');
     return null;
   }
 

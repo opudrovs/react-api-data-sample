@@ -1,6 +1,7 @@
 /**
  * Mocks PrismaClient to be used in tests.
  */
+
 import { beforeEach, jest } from '@jest/globals';
 import { PrismaClient } from '@prisma/client';
 import { DeepMockProxy, mockDeep, mockReset } from 'jest-mock-extended';

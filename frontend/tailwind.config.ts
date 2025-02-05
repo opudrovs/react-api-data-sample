@@ -12,8 +12,15 @@ export default {
         background: 'var(--background)',
         foreground: 'var(--foreground)',
       },
+      fontSize: {
+        // Match Mantine font sizes
+        sm: '16px',
+        base: '18px',
+        lg: '20px',
+        xl: '24px',
+      },
     },
   },
-  darkMode: 'selector',
+  darkMode: ['class', '[data-mantine-color-scheme="dark"]'], // Enables single theme toggle for Mantine and Tailwind CSS
   plugins: [],
 } satisfies Config;

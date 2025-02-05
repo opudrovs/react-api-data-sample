@@ -15,9 +15,6 @@ dist/
 docker-compose.override.yml
 .dockerignore
 
-# Prisma
-prisma/migrations/
-
 # Test coverage
 coverage/
 

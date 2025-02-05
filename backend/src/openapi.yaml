@@ -11,7 +11,7 @@ paths:
   /api/auth/login:
     post:
       summary: Log in a user and return an auth cookie
-      operationId: logInUser
+      operationId: loginUser
       requestBody:
         required: true
         content:
@@ -234,8 +234,6 @@ paths:
           description: OK - Task updated
         401:
           description: Unauthorized - Auth cookie missing or invalid
-        403:
-          description: Forbidden - Task is read-only and cannot be updated
         404:
           description: Not Found - Task not found
         422:
@@ -262,8 +260,6 @@ paths:
           description: No Content - Task soft-deleted
         401:
           description: Unauthorized - Auth cookie missing or invalid
-        403:
-          description: Forbidden - Task is read-only and cannot be deleted
         404:
           description: Not Found - Task not found or already deleted
         422:
@@ -332,9 +328,6 @@ components:
           type: string
           format: date-time
           nullable: true
-        readOnly:
-          type: boolean
-          default: false
     NewTask:
       type: object
       properties:
@@ -349,9 +342,6 @@ components:
         dueDate:
           type: string
           format: date-time
-        readOnly:
-          type: boolean
-          default: false
     UpdateTask:
       type: object
       properties:
@@ -366,6 +356,3 @@ components:
         dueDate:
           type: string
           format: date-time
-        readOnly:
-          type: boolean
-          default: false
