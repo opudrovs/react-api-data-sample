@@ -1,7 +1,8 @@
 /**
- * Defines authentication-related routes for the API
- * Matches the POST /api/auth/login endpoint in openapi.yaml
+ * Defines authentication-related routes
+ * Matches the endpoints defined in openapi.yaml under /api/auth
  */
+
 import express from 'express';
 import { body } from 'express-validator';
 

@@ -2,8 +2,10 @@
  * Middleware to authenticate users using Supabase session tokens stored in cookies.
  * Matches the security scheme `CookieAuth` defined in openapi.yaml.
  */
+
 import { NextFunction, Request, Response } from 'express';
 
+import { logError } from '../utils/logger.js';
 import { supabaseClient } from '../utils/supabase-client.js';
 
 /**
@@ -44,7 +46,7 @@ export const authenticateUser = async (
     req.user = data.user;
     next();
   } catch (error) {
-    console.error('Unexpected authentication error:', error);
+    logError('Unexpected authentication error', error);
     res.status(500).json({
       message:
         'An unexpected error occurred during authentication. Please try again later.',

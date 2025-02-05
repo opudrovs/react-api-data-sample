@@ -1,12 +1,12 @@
 /**
  * Validation middleware
  */
+
 import { NextFunction, Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 
 /**
  * Middleware to validate request data based on express-validator rules.
- * If validation fails, it sends a 422 Unprocessable Entity response with error details.
  * @param req - Express request object.
  * @param res - Express response object.
  * @param next - Next middleware function.

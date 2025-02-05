@@ -1,7 +1,8 @@
 /**
  * Entry point for the Express application. Sets up routes and middleware.
- * OpenAPI alignment: Sets up all routes and Swagger UI as specified in openapi.yaml
+ * Sets up all routes and Swagger UI as specified in openapi.yaml
  */
+
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
@@ -42,7 +43,7 @@ const limiter: RateLimitRequestHandler = rateLimit({
 // Rate limiting
 app.use(limiter);
 
-// Prevents users from sending duplicate query parameters
+// Prevents users from sending duplicate query parameters (parameter pollution attacks)
 app.use(hpp());
 
 // Register routes

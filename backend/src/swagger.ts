@@ -2,6 +2,7 @@
  * Swagger UI setup for serving API documentation from openapi.yaml.
  * Matches the structure defined in openapi.yaml
  */
+
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';

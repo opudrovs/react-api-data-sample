@@ -9,8 +9,9 @@ generator client {
 }
 
 enum TaskStatus {
-  PENDING
+  TO_DO
   IN_PROGRESS
+  PENDING
   COMPLETED
 }
 
@@ -29,5 +30,4 @@ model Task {
    dueDate     DateTime
    createdAt   DateTime @default(now())
    deletedAt   DateTime?
-   readOnly    Boolean  @default(false)
 }

@@ -1,30 +1,19 @@
-'use client';
+/**
+ * Root Layout Component
+ *
+ * This component defines the global layout for the Next.js application.
+ * - Wraps the entire app with the `Providers` component to manage global auth state and themes.
+ * - Applies global styles for consistency across pages.
+ * - Sets `<html>` tag attributes.
+ *
+ * All pages in the app are rendered inside this layout.
+ */
 
-import {
-  MantineProvider,
-  createTheme,
-  localStorageColorSchemeManager,
-} from '@mantine/core';
-import dynamic from 'next/dynamic';
-
-import { COLOR_SCHEME_KEY } from '@/constants';
-import { AuthProvider } from '@/contexts/AuthContext';
-
+import Providers from '@/components/Providers';
 import '@/styles/globals.css';
 import '@mantine/core/styles.css';
-
-const theme = createTheme({
-  fontFamily: 'Open Sans, sans-serif',
-  primaryColor: 'cyan',
-});
-
-const colorSchemeManager = localStorageColorSchemeManager({
-  key: COLOR_SCHEME_KEY,
-});
-
-const InnerLayout = dynamic(() => import('@/components/InnerLayout'), {
-  ssr: false,
-});
+import '@mantine/dates/styles.css';
+import '@mantine/notifications/styles.css';
 
 export default function RootLayout({
   children,
@@ -32,15 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AuthProvider>
-          <MantineProvider
-            theme={theme}
-            colorSchemeManager={colorSchemeManager}
-            withGlobalClasses
-          >
-            <InnerLayout>{children}</InnerLayout>
-          </MantineProvider>
-        </AuthProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

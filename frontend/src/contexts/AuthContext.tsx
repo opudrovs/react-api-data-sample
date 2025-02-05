@@ -4,16 +4,8 @@ import { useRouter } from 'next/navigation';
 import { createContext, useEffect, useState } from 'react';
 
 import { API_URL } from '@/constants';
-
-/**
- * Type definition for authentication context.
- */
-interface AuthContextType {
-  isAuthenticated: boolean;
-  isAuthChecked: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => Promise<void>;
-}
+import { AuthContextType } from '@/types/auth';
+import { logError } from '@/utils/logger';
 
 /**
  * Creates an authentication context with an initial `undefined` value.
@@ -41,6 +33,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     checkAuthStatus();
   }, []);
 
+  /**
+   * Checks the current authentication status by making a request to the backend.
+   * - If the response is successful, the user is authenticated.
+   * - If an error occurs, logs the error but does not interrupt the app flow.
+   * - Ensures authentication status is checked only once on initial load.
+   */
   const checkAuthStatus = async () => {
     try {
       const response = await fetch(`${API_URL}/api/auth/status`, {
@@ -50,26 +48,47 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       setIsAuthenticated(response.ok);
     } catch (error) {
-      console.error('Error checking auth status:', error);
+      logError('Error checking auth status', error);
     } finally {
       setIsAuthChecked(true);
     }
   };
 
-  const login = async (email: string, password: string) => {
-    const response = await fetch(`${API_URL}/api/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ email, password }),
-    });
+  /**
+   * Attempts to log the user in using email and password.
+   * - Sends a login request to the backend.
+   * - If successful, updates authentication state and redirects to the home page.
+   * - Uses `window.location.href = '/'` to force a full page reload and ensure cookies are sent.
+   */
+  const login = async (email: string, password: string): Promise<boolean> => {
+    try {
+      const response = await fetch(`${API_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (response.ok) {
-      setIsAuthenticated(true);
-      router.push('/'); // Redirect to home after login
+      const success = response.ok;
+      if (success) {
+        setIsAuthenticated(true);
+        // Redirect to home page after login
+        // Force a full page reload to ensure cookies are sent
+        window.location.href = '/';
+      }
+
+      return success;
+    } catch (error) {
+      logError('Login error', error);
+      return false;
     }
   };
 
+  /**
+   * Logs the user out by sending a logout request to the backend.
+   * - Clears the authentication state.
+   * - Redirects the user to the login page after logout.
+   */
   const logout = async () => {
     await fetch(`${API_URL}/api/auth/logout`, {
       method: 'POST',

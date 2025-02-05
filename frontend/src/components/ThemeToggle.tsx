@@ -1,31 +1,31 @@
-import {
-  ActionIcon,
-  useComputedColorScheme,
-  useMantineColorScheme,
-} from '@mantine/core';
+import { ActionIcon } from '@mantine/core';
 import { IconMoon, IconSun } from '@tabler/icons-react';
-import cx from 'clsx';
 
-import classes from './ThemeToggle.module.css';
+import { useTheme } from '@/hooks/useTheme';
 
+/**
+ * Theme Toggle Component
+ *
+ * This component provides an icon button to toggle between light and dark themes
+ * applying changes to both Mantine UI and Tailwind CSS.
+ */
 export const ThemeToggle = () => {
-  const computedColorScheme = useComputedColorScheme('light', {
-    getInitialValueInEffect: true,
-  });
-
-  const { setColorScheme } = useMantineColorScheme();
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <ActionIcon
-      onClick={() =>
-        setColorScheme(computedColorScheme === 'light' ? 'dark' : 'light')
-      }
+      onClick={toggleTheme}
       variant="default"
       size="xl"
       aria-label="Toggle color scheme"
+      role="button"
+      aria-pressed={theme === 'dark'}
     >
-      <IconSun className={cx(classes.icon, classes.light)} stroke={1.5} />
-      <IconMoon className={cx(classes.icon, classes.dark)} stroke={1.5} />
+      {theme == 'dark' ? (
+        <IconSun style={{ width: 18, height: 18 }} />
+      ) : (
+        <IconMoon style={{ width: 18, height: 18 }} />
+      )}
     </ActionIcon>
   );
 };

@@ -1,3 +1,7 @@
+/**
+ * Unit tests for the Task controller
+ */
+
 import { Request, Response } from 'express';
 
 import {
@@ -21,11 +25,10 @@ const tasksMock: TaskModel[] = [
     id: 1,
     title: 'Task One',
     description: 'First sample task',
-    status: 'PENDING',
+    status: 'TO_DO',
     priority: 'HIGH',
     dueDate: new Date('2024-01-01T00:00:00Z'),
     createdAt: new Date('2024-01-01T00:00:00Z'),
-    readOnly: false,
     deletedAt: null,
   },
   {
@@ -36,7 +39,6 @@ const tasksMock: TaskModel[] = [
     priority: 'MEDIUM',
     dueDate: new Date('2024-02-01T00:00:00Z'),
     createdAt: new Date('2024-01-01T00:00:00Z'),
-    readOnly: false,
     deletedAt: null,
   },
   {
@@ -47,7 +49,6 @@ const tasksMock: TaskModel[] = [
     priority: 'LOW',
     dueDate: new Date('2024-03-01T00:00:00Z'),
     createdAt: new Date('2024-01-01T00:00:00Z'),
-    readOnly: true,
     deletedAt: null,
   },
 ];
@@ -168,18 +169,6 @@ describe('Task Controller', () => {
 
       expect(statusMock).toHaveBeenCalledWith(404);
     });
-
-    it('should return 403 if task is read-only', async () => {
-      mockRequest = {
-        params: { id: '3' },
-        body: { title: 'Updated Task' } as UpdateTaskDTO,
-      };
-      prismaMock.task.findUnique.mockResolvedValue(tasksMock[2]);
-
-      await updateTask(mockRequest as Request, mockResponse as Response);
-
-      expect(statusMock).toHaveBeenCalledWith(403);
-    });
   });
 
   describe('deleteTask', () => {
@@ -206,15 +195,6 @@ describe('Task Controller', () => {
       await deleteTask(mockRequest as Request, mockResponse as Response);
 
       expect(statusMock).toHaveBeenCalledWith(404);
-    });
-
-    it('should return 403 if task is read-only', async () => {
-      mockRequest = { params: { id: '3' } };
-      prismaMock.task.findUnique.mockResolvedValue(tasksMock[2]);
-
-      await deleteTask(mockRequest as Request, mockResponse as Response);
-
-      expect(statusMock).toHaveBeenCalledWith(403);
     });
   });
 });

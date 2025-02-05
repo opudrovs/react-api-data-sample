@@ -12,5 +12,4 @@ export type TaskResponseDTO = {
   priority: TaskPriority;
   dueDate: string;
   deletedAt?: string | null;
-  readOnly: boolean;
 };

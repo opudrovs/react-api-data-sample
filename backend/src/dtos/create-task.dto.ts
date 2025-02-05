@@ -10,5 +10,4 @@ export type CreateTaskDTO = {
   status: TaskStatus;
   priority: TaskPriority;
   dueDate: string;
-  readOnly: boolean;
 };
