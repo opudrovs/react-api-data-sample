@@ -25,14 +25,20 @@ export const TaskList = () => {
   const [page, setPage] = useState(1);
   const router = useRouter();
 
-  const numPages = Math.ceil(tasks.length / TASKS_PER_PAGE);
-
   const fetchTasks = () => {
     setLoading(true);
 
     fetch(`${API_URL}/api/tasks`, { credentials: 'include', cache: 'no-store' })
       .then((res) => res.json())
-      .then((data) => setTasks(data))
+      .then((data) => {
+        setTasks(data);
+
+        // Adjust page if it's now out of bounds
+        const numPages = Math.ceil(data.length / TASKS_PER_PAGE);
+        if (page > numPages) {
+          setPage(Math.max(numPages, 1));
+        }
+      })
       .catch((error) => {
         logError('Failed to fetch tasks', error);
         showError('Failed to load tasks.');
@@ -52,6 +58,7 @@ export const TaskList = () => {
   if (loading) return <p>Loading tasks...</p>;
   if (tasks.length === 0) return <p>No tasks available.</p>;
 
+  const numPages = Math.ceil(tasks.length / TASKS_PER_PAGE);
   const startIndex = (page - 1) * TASKS_PER_PAGE;
   const displayedTasks = tasks.slice(startIndex, startIndex + TASKS_PER_PAGE);
 

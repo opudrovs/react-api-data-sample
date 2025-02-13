@@ -2,6 +2,8 @@
  * Seed script to populate the database with tasks for initial testing.
  * WARNING: Deletes existing tasks.
  */
+import '../src/config/env.js'; // Load env variables before anything else
+
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
