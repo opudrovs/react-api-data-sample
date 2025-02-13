@@ -17,7 +17,7 @@ type TaskCardProps = {
 };
 
 /**
- * TaskCard component displays task details.
+ * TaskCard component displays simplified task details.
  */
 export const TaskCard = ({ task, onTaskDeleted }: TaskCardProps) => {
   const router = useRouter();

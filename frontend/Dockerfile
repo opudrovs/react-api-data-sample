@@ -10,7 +10,7 @@ COPY package*.json ./
 # Install only production dependencies
 RUN npm install
 
-# Copy all frontend files
+# Copy all frontend files (excluding node_modules via .dockerignore)
 COPY . .
 
 # Set environment variable for production mode
