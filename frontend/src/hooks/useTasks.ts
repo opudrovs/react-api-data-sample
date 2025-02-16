@@ -12,7 +12,15 @@ import { showError } from '@/utils/notifications';
  * - Fetches tasks from the API and updates the state.
  * - Supports pagination by tracking the current page.
  * - Handles loading and error states.
- * - Ensures fresh data by using `cache: 'no-store'`.s
+ * - Ensures fresh data by using `cache: 'no-store'`.
+ *
+ * @returns {Object} - Returns the following properties:
+ *  - `tasks` (TaskResponseDTO[]): List of tasks fetched from the API.
+ *  - `loading` (boolean): Indicates whether tasks are currently being loaded.
+ *  - `page` (number): Current page number.
+ *  - `setPage` (function): Function to update the current page.
+ *  - `totalPages` (number): Total number of pages available.
+ *  - `refreshTasks` (function): Function to manually refresh the task list.
  */
 export const useTasks = (
   tasksPerPage = 10,
