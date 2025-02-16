@@ -43,17 +43,15 @@ export const useTasks = (
       const numPages = Math.ceil(data.length / tasksPerPage);
       setTotalPages(numPages);
 
-      // Adjust page if it's now out of bounds
-      if (page > numPages) {
-        setPage(Math.max(numPages, 1));
-      }
+      // Reset page if out of bounds
+      setPage((prevPage) => Math.min(prevPage, numPages) || 1);
     } catch (error) {
       logError('Failed to fetch tasks', error);
       showError('Failed to load tasks.');
     } finally {
       setLoading(false);
     }
-  }, [page, tasksPerPage]);
+  }, [tasksPerPage]);
 
   useEffect(() => {
     if (!isAuthChecked || !isAuthenticated) return;
@@ -61,8 +59,15 @@ export const useTasks = (
     fetchTasks();
   }, [isAuthenticated, isAuthChecked, fetchTasks]);
 
+  // Get paginated tasks
+  const displayedTasks = tasks.slice(
+    (page - 1) * tasksPerPage,
+    page * tasksPerPage
+  );
+
   return {
     tasks,
+    displayedTasks,
     loading,
     page,
     setPage,

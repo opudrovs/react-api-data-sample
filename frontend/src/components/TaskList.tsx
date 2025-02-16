@@ -16,19 +16,13 @@ const TASKS_PER_PAGE = 10;
  */
 export const TaskList = () => {
   const { isAuthenticated, isAuthChecked } = useAuth();
-  const { tasks, loading, page, setPage, totalPages, refreshTasks } = useTasks(
-    TASKS_PER_PAGE,
-    isAuthenticated,
-    isAuthChecked
-  );
+  const { displayedTasks, loading, page, setPage, totalPages, refreshTasks } =
+    useTasks(TASKS_PER_PAGE, isAuthenticated, isAuthChecked);
   const router = useRouter();
 
   if (!isAuthChecked) return <p>Loading authentication...</p>;
   if (loading) return <p>Loading tasks...</p>;
-  if (tasks.length === 0) return <p>No tasks available.</p>;
-
-  const startIndex = (page - 1) * TASKS_PER_PAGE;
-  const displayedTasks = tasks.slice(startIndex, startIndex + TASKS_PER_PAGE);
+  if (displayedTasks.length === 0) return <p>No tasks available.</p>;
 
   return (
     <Box className="max-w-2xl mx-auto p-4">
