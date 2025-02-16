@@ -1,3 +1,5 @@
+'use client';
+
 import { API_URL } from '@/constants';
 import { logError } from '@/utils/logger';
 import { showError } from '@/utils/notifications';

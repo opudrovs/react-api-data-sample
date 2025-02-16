@@ -5,19 +5,17 @@ import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/Button';
 import { TaskFormFields } from '@/components/TaskFormFields';
-import { API_URL } from '@/constants';
 import { useTaskFormFields } from '@/hooks/useTaskFormFields';
+import { useTaskMutations } from '@/hooks/useTaskMutations';
 import { CreateTaskFormData } from '@/types/task';
-import { logError } from '@/utils/logger';
-import { showError, showSuccess } from '@/utils/notifications';
 
 /**
  * CreateTaskForm Component
  *
  * This component renders a form for creating a new task. It integrates:
  * - Form state management using `useTaskFormFields`.
- * - API request handling for submitting new tasks.
- * - Notifications for success and error handling.
+ * - Uses `useTaskFormFields` for form state management.
+ * - Uses `useTaskMutations` to handle API interactions.
  *
  * Features:
  * - Prefills the form with default values.
@@ -27,6 +25,7 @@ import { showError, showSuccess } from '@/utils/notifications';
  */
 export const CreateTaskForm = () => {
   const router = useRouter();
+  const { createTask, loading } = useTaskMutations();
   const defaultDueDate = new Date();
   defaultDueDate.setDate(defaultDueDate.getDate() + 7);
 
@@ -42,23 +41,10 @@ export const CreateTaskForm = () => {
     useTaskFormFields({ defaultValues, mode: 'create' });
 
   const onSubmit = async (data: CreateTaskFormData) => {
-    try {
-      const response = await fetch(`${API_URL}/api/tasks`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) throw new Error('Failed to create task');
-
-      showSuccess('Task successfully created!');
-      router.push('/tasks');
-    } catch (error) {
-      showError('Failed to create task. Please try again.');
-      logError('Error creating task', error, { requestData: data });
-    }
+    await createTask(data);
   };
+
+  const isDisabled = loading || isSubmitting;
 
   return (
     <Box className="max-w-md mx-auto mt-2 p-6 bg-gray-200 dark:bg-gray-800 shadow-lg rounded-lg border">
@@ -68,13 +54,13 @@ export const CreateTaskForm = () => {
         <TaskFormFields control={control} register={register} errors={errors} />
 
         <Group justify="center">
-          <Button type="submit" loading={isSubmitting}>
+          <Button type="submit" loading={isDisabled}>
             Create Task
           </Button>
           <Button
             variant="outline"
             onClick={() => reset()}
-            disabled={isSubmitting}
+            disabled={isDisabled}
           >
             Reset
           </Button>
