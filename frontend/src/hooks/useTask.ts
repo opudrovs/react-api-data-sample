@@ -29,11 +29,13 @@ export const useTask = (taskId: string | null) => {
 
     setLoading(true);
     try {
-      const data = await fetchApi<TaskResponseDTO>(`/api/tasks/${taskId}`);
+      const data =
+        (await fetchApi<TaskResponseDTO>(`/api/tasks/${taskId}`)) || null; // Ensure a valid value
       setTask(data);
     } catch (error) {
       logError('Failed to fetch task', error);
       showError('Failed to load task.');
+      setTask(null); // Explicitly reset task to null in case of error
     } finally {
       setLoading(false);
     }

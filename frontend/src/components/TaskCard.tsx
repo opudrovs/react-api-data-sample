@@ -6,10 +6,8 @@ import { useState } from 'react';
 
 import { Button } from '@/components/Button';
 import { ConfirmModal } from '@/components/ConfirmModal';
-import { API_URL } from '@/constants';
 import { TaskResponseDTO } from '@/dtos/task';
-import { logError } from '@/utils/logger';
-import { showError, showSuccess } from '@/utils/notifications';
+import { useTaskMutations } from '@/hooks/useTaskMutations';
 
 type TaskCardProps = {
   task: TaskResponseDTO;
@@ -21,25 +19,13 @@ type TaskCardProps = {
  */
 export const TaskCard = ({ task, onTaskDeleted }: TaskCardProps) => {
   const router = useRouter();
+  const { deleteTask, loading } = useTaskMutations();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const handleDelete = async () => {
     setDeleteModalOpen(false);
-
-    try {
-      const response = await fetch(`${API_URL}/api/tasks/${task.id}`, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
-
-      if (!response.ok) throw new Error('Failed to delete task');
-
-      showSuccess('Task successfully deleted!');
-      onTaskDeleted();
-    } catch (error) {
-      showError('Failed to delete task. Please try again.');
-      logError('Error deleting task', error, { taskId: task.id });
-    }
+    await deleteTask(task.id);
+    onTaskDeleted();
   };
 
   return (
@@ -66,6 +52,7 @@ export const TaskCard = ({ task, onTaskDeleted }: TaskCardProps) => {
           variant="filled"
           color="red"
           onClick={() => setDeleteModalOpen(true)}
+          disabled={loading}
         >
           Delete
         </Button>

@@ -24,13 +24,12 @@ import { showError } from '@/utils/notifications';
  * @returns {Promise<T>} - Returns a promise that resolves with the response data.
  * @throws {Error} - Throws an error if the request fails.
  */
-
 export async function fetchApi<T>(
   endpoint: string,
   method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET',
   body?: object,
   headers: Record<string, string> = {}
-): Promise<T> {
+): Promise<T | void> {
   try {
     const fetchOptions: RequestInit = {
       method,
@@ -53,6 +52,11 @@ export async function fetchApi<T>(
 
     if (!response.ok) {
       throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    }
+
+    // Handle 204 No Content to prevent JSON parsing errors
+    if (response.status === 204) {
+      return;
     }
 
     return response.json();

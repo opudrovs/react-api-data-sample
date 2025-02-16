@@ -49,7 +49,7 @@ export const useTaskMutations = () => {
   );
 
   const updateTask = useCallback(
-    async (taskId: string, taskData: Partial<TaskResponseDTO>) => {
+    async (taskId: string | number, taskData: Partial<TaskResponseDTO>) => {
       setLoading(true);
       try {
         await fetchApi(`/api/tasks/${taskId}`, 'PUT', taskData);
@@ -65,7 +65,7 @@ export const useTaskMutations = () => {
   );
 
   const deleteTask = useCallback(
-    async (taskId: string) => {
+    async (taskId: string | number) => {
       setLoading(true);
       try {
         await fetchApi(`/api/tasks/${taskId}`, 'DELETE');

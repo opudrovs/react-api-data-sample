@@ -36,7 +36,7 @@ export const useTasks = (
     setLoading(true);
 
     try {
-      const data = await fetchApi<TaskResponseDTO[]>('/api/tasks');
+      const data = (await fetchApi<TaskResponseDTO[]>('/api/tasks')) || []; // Ensure array
       setTasks(data);
 
       // Calculate total pages dynamically
