@@ -23,27 +23,6 @@ export const TaskList = () => {
   );
   const router = useRouter();
 
-  // const fetchTasks = () => {
-  //   setLoading(true);
-
-  //   fetch(`${API_URL}/api/tasks`, { credentials: 'include', cache: 'no-store' })
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       setTasks(data);
-
-  //       // Adjust page if it's now out of bounds
-  //       const numPages = Math.ceil(data.length / TASKS_PER_PAGE);
-  //       if (page > numPages) {
-  //         setPage(Math.max(numPages, 1));
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       logError('Failed to fetch tasks', error);
-  //       showError('Failed to load tasks.');
-  //     })
-  //     .finally(() => setLoading(false));
-  // };
-
   if (!isAuthChecked) return <p>Loading authentication...</p>;
   if (loading) return <p>Loading tasks...</p>;
   if (tasks.length === 0) return <p>No tasks available.</p>;
