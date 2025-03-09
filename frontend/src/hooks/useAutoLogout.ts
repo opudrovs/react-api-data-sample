@@ -2,8 +2,8 @@
 
 import { useEffect } from 'react';
 
-import { API_URL } from '@/constants';
 import { useAuth } from '@/hooks/useAuth';
+import { fetchApi } from '@/utils/fetchApi';
 import { logError } from '@/utils/logger';
 
 /**
@@ -18,17 +18,10 @@ export const useAutoLogout = (): void => {
   useEffect(() => {
     const checkSessionValidity = async () => {
       try {
-        const response = await fetch(API_URL + '/api/auth/status', {
-          method: 'GET',
-          credentials: 'include', // Ensures cookies are sent
-        });
-
-        if (!response.ok) {
-          logout(); // Log out if session has expired
-        }
+        await fetchApi('/api/auth/status');
       } catch (error) {
-        logError('Error checking session status:', error);
-        logout();
+        logError('Session expired, logging out.', error);
+        logout(); // Log out if session has expired or API fails
       }
     };
 
