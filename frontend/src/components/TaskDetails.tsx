@@ -2,14 +2,12 @@
 
 import { Box, Text } from '@mantine/core';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { Button } from '@/components/Button';
 import { ConfirmModal } from '@/components/ConfirmModal';
-import { API_URL } from '@/constants';
-import { TaskResponseDTO } from '@/dtos/task';
-import { logError } from '@/utils/logger';
-import { showError, showSuccess } from '@/utils/notifications';
+import { useTask } from '@/hooks/useTask';
+import { useTaskMutations } from '@/hooks/useTaskMutations';
 import { mapPriorityToLabel, mapStatusToLabel } from '@/utils/taskUtils';
 
 /**
@@ -28,56 +26,21 @@ import { mapPriorityToLabel, mapStatusToLabel } from '@/utils/taskUtils';
  * - Uses `showError` and `showSuccess` notifications for user feedback.
  */
 export const TaskDetails = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  const [task, setTask] = useState<TaskResponseDTO | null>(null);
-  const [loading, setLoading] = useState(true);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchTask = async () => {
-      try {
-        const response = await fetch(`${API_URL}/api/tasks/${id}`, {
-          credentials: 'include',
-        });
-
-        if (!response.ok) throw new Error('Task not found');
-
-        setTask(await response.json());
-      } catch (error) {
-        showError('Failed to load task data.');
-        logError('Error fetching task data', error, { taskId: id });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTask();
-  }, [id]);
+  const { task, loading } = useTask(id);
+  const { deleteTask, loading: deleteLoading } = useTaskMutations();
 
   const handleDelete = async () => {
     setDeleteModalOpen(false);
-
-    try {
-      const response = await fetch(`${API_URL}/api/tasks/${id}`, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
-
-      if (!response.ok) throw new Error('Failed to delete task');
-
-      showSuccess('Task successfully deleted!');
-      router.push('/');
-    } catch (error) {
-      showError('Failed to delete task. Please try again.');
-      logError('Error deleting task', error, { taskId: id });
-    }
+    if (!task) return;
+    await deleteTask(task.id);
   };
 
   if (loading) return <p>Loading task details...</p>;
   if (!task) return <p>Task not found.</p>;
-
-  const taskId = Array.isArray(id) ? id[0] : (id ?? '');
 
   return (
     <Box className="max-w-md mx-auto mt-2 p-6 bg-gray-200 dark:bg-gray-800 shadow-lg rounded-lg border space-y-4">
@@ -85,22 +48,18 @@ export const TaskDetails = () => {
 
       {/* Task ID */}
       <div className="p-2 text-gray-700 dark:text-gray-300 text-sm bg-gray-100 dark:bg-gray-700 rounded-md mb-4">
-        <strong>Task ID:</strong> {taskId}
+        <strong>Task ID:</strong> {task.id}
       </div>
 
       {/* Task Fields */}
       <h2 className="text-2xl font-semibold">{task.title}</h2>
-
       <Text>{task.description || 'No description'}</Text>
-
       <Text>
         <strong>Status:</strong> {mapStatusToLabel(task.status)}
       </Text>
-
       <Text>
         <strong>Priority:</strong> {mapPriorityToLabel(task.priority)}
       </Text>
-
       <Text>
         <strong>Due Date:</strong> {new Date(task.dueDate).toLocaleDateString()}
       </Text>
@@ -114,8 +73,9 @@ export const TaskDetails = () => {
           variant="filled"
           color="red"
           onClick={() => setDeleteModalOpen(true)}
+          disabled={deleteLoading}
         >
-          Delete Task
+          {deleteLoading ? 'Deleting...' : 'Delete Task'}
         </Button>
       </div>
 
