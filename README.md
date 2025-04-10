@@ -46,10 +46,7 @@ The frontend will be available at [http://localhost:3000](http://localhost:3000)
 ## Demo Login Credentials
 
 ```plaintext
-Email:
 testuser@example.com
-
-Password:
 ReactDemo123
 ```
 
