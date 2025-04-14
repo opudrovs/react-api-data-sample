@@ -8,7 +8,7 @@ on:
       - '.github/workflows/backend_ci.yml'
   pull_request:
     paths:
-      - 'frontend/**'
+      - 'backend/**'
       - '.github/workflows/backend_ci.yml'
     
 jobs:
